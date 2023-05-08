@@ -49,6 +49,11 @@ app.post("/store-post", async (req, res) => {
     res.redirect('/');
 });
 
+app.get("/post/:id", async (req, res) => {
+    const photo = await Photo.findById(req.params.id);
+    res.render('video-page', {photo: photo});
+});
+
 
 app.listen(port, () => {
     console.log(`Server started at port ${port} ...`);
