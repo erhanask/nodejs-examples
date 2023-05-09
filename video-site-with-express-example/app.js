@@ -1,15 +1,22 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const fileUpload = require('express-fileupload');
 const port = 3000;
 const app = express();
+const uploadDir = 'public/uploads';
 const Photo = require('./models/Photos');
-
+const fs = require('fs');
 
 const logger = (req, res, next) => {
     // Every time a request is made, this middleware will be called
     // console.log('visited');
     next();
 }
+
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+
 
 // Connect to MongoDB
 main().catch(err => console.log(err));
@@ -27,6 +34,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 app.use(logger);
+app.use(fileUpload());
 
 // Models
 
@@ -45,7 +53,16 @@ app.get("/add-post", (req, res) => {
 });
 
 app.post("/store-post", async (req, res) => {
-    await Photo.create(req.body);
+    let uploadedPhoto = req.files.photo;
+    let uploadPath = __dirname + '/public/uploads/' + uploadedPhoto.name;
+
+    uploadedPhoto.mv(uploadPath, async () => {
+        await Photo.create({
+            ...req.body,
+            image: '/public/uploads/' + uploadedPhoto.name,
+        });
+    });
+
     res.redirect('/');
 });
 
