@@ -4,6 +4,17 @@
 		<div class="container-fluid">
 			<div class="mx-auto tm-content-container">
 				<main>
+					<div class="row mb-2 pb-1">
+						<div class="col-12">
+							<a href="/edit-post/<%= photo.id %>" class="btn btn-primary">
+								Edit Record
+							</a>
+							<form class="d-inline" method="POST" action="/delete-post">
+								<input type="hidden" name="id" value="<%= photo.id %>">
+								<input type="submit" value="Delete Record" class="btn btn-danger ml-2">
+							</form>
+						</div>
+					</div>
 					<div class="row mb-5 pb-4">
 						<div class="col-12">
 							<img src="<%= photo.image %>" alt="image" class="w-100">

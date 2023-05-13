@@ -6,6 +6,8 @@ const app = express();
 const uploadDir = 'public/uploads';
 const Photo = require('./models/Photos');
 const fs = require('fs');
+const photoController = require('./controllers/photoController');
+
 
 const logger = (req, res, next) => {
     // Every time a request is made, this middleware will be called
@@ -39,37 +41,21 @@ app.use(fileUpload());
 // Models
 
 // Routes
-app.get('/', async (req, res) => {
-    const photos = await Photo.find({});
-    res.render('index', {photos: photos});
-})
+app.get('/', photoController.getAllPosts);
 
-app.get("/about", (req, res) => {
-    res.render('about');
-});
+app.get("/about", photoController.getAboutPage);
 
-app.get("/add-post", (req, res) => {
-    res.render('add_post');
-});
+app.get("/add-post", photoController.getAddPage);
 
-app.post("/store-post", async (req, res) => {
-    let uploadedPhoto = req.files.photo;
-    let uploadPath = __dirname + '/public/uploads/' + uploadedPhoto.name;
+app.get("/edit-post/:id", photoController.getEditPage);
 
-    uploadedPhoto.mv(uploadPath, async () => {
-        await Photo.create({
-            ...req.body,
-            image: '/public/uploads/' + uploadedPhoto.name,
-        });
-    });
+app.post("/update-post/:id", photoController.updatePost);
 
-    res.redirect('/');
-});
+app.post("/delete-post", photoController.deletePost);
 
-app.get("/post/:id", async (req, res) => {
-    const photo = await Photo.findById(req.params.id);
-    res.render('video-page', {photo: photo});
-});
+app.post("/store-post", photoController.createPost);
+
+app.get("/post/:id", photoController.getPost);
 
 
 app.listen(port, () => {
