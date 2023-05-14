@@ -4,7 +4,6 @@ const fileUpload = require('express-fileupload');
 const port = 3000;
 const app = express();
 const uploadDir = 'public/uploads';
-const Photo = require('./models/Photos');
 const fs = require('fs');
 const photoController = require('./controllers/photoController');
 
